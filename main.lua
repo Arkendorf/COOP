@@ -1,80 +1,73 @@
-Class = require "class"
-require "Binary"
-require "LUBE"
-require "menu"
-require "client"
-require "server"
+require ("middleclass")
+require ("middleclass-commons")
+require ("LUBE")
+require("pickle")
+
+require ("server")
+require ("client")
 
 function love.load()
-  love.window.setMode(1, 1, {fullscreen = true})
-  w, h = love.graphics.getDimensions()
-  love.graphics.setDefaultFilter("nearest", "nearest")
-  currentstate = "menu"
-  translate = {x = w / 2, y = h / 2}
-  scale = {x = w * 4 / 800, y = h * 4 / 600}
-  menu_load()
+  status = "menu"
+  errorMsg = ""
 end
 
 function love.update(dt)
-
-	if currentstate == "menu" then
-		menu_update(dt)
-	elseif currentstate == "client" then
-		client_update(dt)
-	elseif currentstate == "server" then
-		server_update(dt)
-	end
-
+  if status == "server" then
+    server_update(dt)
+  elseif status == "client" then
+    client_update(dt)
+  end
 end
 
 function love.draw()
-  offset()
-
-	if currentstate == "menu" then
-		menu_draw()
-
-	elseif currentstate == "client" then
-		client_draw()
-	elseif currentstate == "server" then
-		server_draw()
-	end
-
-
-  love.graphics.print("currentstate = "..currentstate, 50, 0)
-  love.graphics.pop()
-end
-
-function love.mousepressed(x, y, button)
-
-  x = x / scale.x
-  y = y / scale.y
-  if currentstate == "menu" then
-    menu_mousepressed(x, y, button)
+  if status == "server" then
+    server_draw()
+  elseif status == "client" then
+    client_draw()
   end
-
-end
-
-function love.textinput(t)
-
-  if currentstate == "menu" then
-    menu_textinput(t)
-  end
-
+  love.graphics.print(status)
+  love.graphics.print(errorMsg, 0, 15)
 end
 
 function love.keypressed(key)
-
-	if currentstate == "menu" then
-		menu_keypressed(key)
-	end
-
-	if key == 'escape' then
-    love.event.quit()
+  if status == "menu" then
+    if key == "1" then
+      status = "server"
+      server_load()
+    elseif key == "2" then
+      status = "client"
+      client_load()
+    end
   end
-
 end
 
-function offset()
-  love.graphics.push()
-  love.graphics.scale(scale.x, scale.y)
+function love.quit()
+  if status == "server" then
+  elseif status == "client" then
+    client_quit()
+  end
+end
+
+function format(table)
+  newTable = {}
+  for i = 1, #table do
+    for i2 = 1, #table[i] do
+      newTable[#newTable + 1] = table[i][i2]
+    end
+    newTable[#newTable + 1] = "stop"
+  end
+  return newTable
+end
+
+function unformat(table)
+  newTable = {}
+  i2 = 1
+  for i = 1, #table do
+    if table[i] == "stop" then
+      i2 = i2 + 1
+      i = i + 1
+    end
+    newTable[i2][#newTable[i2] + 1] = table[i]
+  end
+  return newTable
 end
