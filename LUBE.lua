@@ -171,7 +171,7 @@ function server:init()
 	self.clients = {}
 	self.handshake = "hi"
 	self.callbacks = {
-		recv = onReceive,
+		recv = onClientReceive,
 		connect = onConnect,
 		disconnect = onDisconnect,
 	}

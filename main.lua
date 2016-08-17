@@ -2,12 +2,12 @@ require ("middleclass")
 require ("middleclass-commons")
 require ("LUBE")
 require("pickle")
-local utf8 = require("utf8")
 
 require ("server")
 require ("client")
 require ("menu")
 require ("graphics")
+require ("game")
 
 function love.load()
   status = "menu"
