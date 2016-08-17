@@ -27,10 +27,11 @@ function server_update(dt)
 
   players[1].x = x
   players[1].y = y
+  
   server:send(pickle(players))
-
-  server:update(dt)
   game_update(dt)
+  server:update(dt)
+
 end
 
 function server_draw()

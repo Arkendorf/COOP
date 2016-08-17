@@ -27,9 +27,8 @@ function client_update(dt)
   end
 
   client:send(pickle({msg = "coords", x, y}))
-
-  client:update(dt)
   game_update(dt)
+  client:update(dt)
 end
 
 function client_draw()
