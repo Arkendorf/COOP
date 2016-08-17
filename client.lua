@@ -33,6 +33,7 @@ function client_draw()
   for i = 1, #players do
     love.graphics.print(tostring(players[i].name), 0, 15 + i * 15)
   end
+
 end
 
 function client_quit()
@@ -46,7 +47,7 @@ function onReceive(data)
     ip = ""
     port = ""
     status = "menu"
-    errorMsg = "Disconnected by server"
+    errorMsg = data.err
   elseif data.msg == "players" then
     players = data
   end

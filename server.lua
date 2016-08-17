@@ -21,7 +21,7 @@ end
 function server_update(dt)
   server:update(dt)
   if #players > preferences.maxPlayers then
-    server:send(pickle({msg = "disconnect"}), lastConnect)
+    server:send(pickle({msg = "disconnect", err = "Maximum players reached"}), lastConnect)
   end
 
   server:send(pickle(players))
@@ -49,4 +49,9 @@ function onDisconnect(clientid)
       break
     end
   end
+end
+
+function server_quit()
+  server:send(pickle({msg = "disconnect", err = "Server closed"}))
+  server:listen(99999)
 end

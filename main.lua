@@ -55,6 +55,7 @@ end
 
 function love.quit()
   if status == "server" then
+    server_quit()
   elseif status == "client" then
     client_quit()
   end
