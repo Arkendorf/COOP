@@ -20,8 +20,6 @@ end
 
 function game_draw()
   for i = 1, #players do
-    if players[i].x ~= nil and players[i].y ~= nil then
-      love.graphics.circle("fill", players[i].x + 200, players[i].y + 150, 10, 10)
-    end
+    love.graphics.circle("fill", players[i].x + 200 - x, players[i].y + 150 - y, 10, 10)
   end
 end

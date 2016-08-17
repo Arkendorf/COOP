@@ -26,8 +26,8 @@ function client_update(dt)
     errorMsg = "Invalid IP or port"
   end
 
-  client:send(pickle({msg = "coords", x, y}))
   game_update(dt)
+  client:send(pickle({msg = "coords", x, y}))
   client:update(dt)
 end
 

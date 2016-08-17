@@ -25,11 +25,15 @@ function server_update(dt)
     server:send(pickle({msg = "disconnect", err = "Maximum players reached"}), lastConnect)
   end
 
+
+
+
+
+  game_update(dt)
   players[1].x = x
   players[1].y = y
-  
+
   server:send(pickle(players))
-  game_update(dt)
   server:update(dt)
 
 end
