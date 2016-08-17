@@ -2,10 +2,20 @@ function server_load()
 
   players = {msg = "players", {name = "Server Host"}}
   errorMsg = ""
-  preferences = {maxPlayers = 2}
+  if tonumber(num) ~= nil then
+    preferences = {maxPlayers = tonumber(num)}
+  else
+    preferences = {maxPlayers = 2}
+  end
 
   server = lube.udpServer()
-	server:listen(25565)
+
+  if tonumber(port) ~= nil then
+    server:listen(tonumber(port))
+  else
+    server:listen(25565)
+  end
+
 end
 
 function server_update(dt)

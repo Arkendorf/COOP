@@ -2,13 +2,22 @@ require ("middleclass")
 require ("middleclass-commons")
 require ("LUBE")
 require("pickle")
+local utf8 = require("utf8")
 
 require ("server")
 require ("client")
+require ("menu")
+require ("graphics")
 
 function love.load()
   status = "menu"
   errorMsg = ""
+
+  w, h = love.graphics.getDimensions()
+  translate = {x = w / 2, y = h / 2}
+  scale = {x = w / 400, y = h / 300}
+
+  menu_load()
 end
 
 function love.update(dt)
@@ -16,28 +25,31 @@ function love.update(dt)
     server_update(dt)
   elseif status == "client" then
     client_update(dt)
+  elseif status == "menu" then
+    menu_update(dt)
   end
 end
 
 function love.draw()
+  love.graphics.push()
+  love.graphics.scale(scale.x, scale.y)
+
   if status == "server" then
     server_draw()
   elseif status == "client" then
     client_draw()
+  elseif status == "menu" then
+    menu_draw()
   end
   love.graphics.print(status)
   love.graphics.print(errorMsg, 0, 15)
+
+  love.graphics.pop()
 end
 
 function love.keypressed(key)
   if status == "menu" then
-    if key == "1" then
-      status = "server"
-      server_load()
-    elseif key == "2" then
-      status = "client"
-      client_load()
-    end
+    menu_keypressed(key)
   end
 end
 
@@ -48,26 +60,20 @@ function love.quit()
   end
 end
 
-function format(table)
-  newTable = {}
-  for i = 1, #table do
-    for i2 = 1, #table[i] do
-      newTable[#newTable + 1] = table[i][i2]
-    end
-    newTable[#newTable + 1] = "stop"
+function love.mousepressed(x, y, button)
+
+  x = x / scale.x
+  y = y / scale.y
+  if status == "menu" then
+    menu_mousepressed(x, y, button)
   end
-  return newTable
+
 end
 
-function unformat(table)
-  newTable = {}
-  i2 = 1
-  for i = 1, #table do
-    if table[i] == "stop" then
-      i2 = i2 + 1
-      i = i + 1
-    end
-    newTable[i2][#newTable[i2] + 1] = table[i]
+function love.textinput(t)
+
+  if status == "menu" then
+    menu_textinput(t)
   end
-  return newTable
+
 end
