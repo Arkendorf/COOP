@@ -75,22 +75,17 @@ function game_update(dt)
 end
 
 function game_draw()
-  for i = 1, #players do
+  love.graphics.rectangle("fill", offset.x - 16, offset.y - 16, 32, 32)
+  for i = 2, #players do
     love.graphics.rectangle("fill", players[i].x + offset.x - x  - 16, players[i].y + offset.y - y  - 16, 32, 32)
   end
   for rowsDown = 1, #map do
     for rowsAcross = 1, #map[1] do
       if tType[map[rowsDown][rowsAcross]] == 1 then
-        if rowsDown == targetTile.y and rowsAcross == targetTile.x then
-          love.graphics.setColor(200, 200, 200)
-        else
-          love.graphics.setColor(255, 255, 255)
-        end
         love.graphics.rectangle("fill", (rowsAcross - 1) * 32 + offset.x - x - 16, (rowsDown - 1) * 32 + offset.y - y - 16, 32, 32)
       end
     end
   end
-  love.graphics.setColor(255, 255, 255)
   love.graphics.print(tostring(mouseDown.time), 200, 0)
 
   love.graphics.circle("line", offset.x + targetPos.x, offset.y + targetPos.y, 8, 10)
