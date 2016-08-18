@@ -43,7 +43,6 @@ function server_draw()
   for i = 1, #players do
     love.graphics.print(tostring(players[i].name), 0, 15 + i * 15)
   end
-  love.graphics.print(coords, 200, 0)
 
   game_draw()
 end

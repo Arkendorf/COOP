@@ -16,11 +16,15 @@ function love.load()
   w, h = love.graphics.getDimensions()
   translate = {x = w / 2, y = h / 2}
   scale = {x = w / 400, y = h / 300}
+  offset = {x = 200, y = 150}
 
   menu_load()
 end
 
 function love.update(dt)
+  mX = love.mouse.getX() / scale.x
+  mY = love.mouse.getY() / scale.y
+
   if status == "server" then
     server_update(dt)
   elseif status == "client" then
