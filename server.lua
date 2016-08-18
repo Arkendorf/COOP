@@ -33,6 +33,11 @@ function server_update(dt)
   players[1].x = x
   players[1].y = y
 
+  if tileChange ~= nil then
+    server:send(pickle(tileChange))
+    tileChange = nil
+  end
+
   server:send(pickle(players))
   server:update(dt)
 
@@ -48,9 +53,9 @@ function server_draw()
 end
 
 function onConnect(clientid)
-
   players[#players + 1] = {name = clientid}
   lastConnect = clientid
+  server:send(pickle(map), clientid)
 end
 
 function onDisconnect(clientid)
@@ -77,6 +82,8 @@ function onClientReceive(data, clientid)
         break
       end
     end
+  elseif data.msg == "tile" then
+    map[data.y][data.x] = data.tile
   end
 
 end

@@ -27,6 +27,12 @@ function client_update(dt)
   end
 
   game_update(dt)
+
+  if tileChange ~= nil then
+    client:send(pickle(tileChange))
+    tileChange = nil
+  end
+
   client:send(pickle({msg = "coords", x, y}))
   client:update(dt)
 end
@@ -54,5 +60,9 @@ function onReceive(data)
     errorMsg = data.err
   elseif data.msg == "players" then
     players = data
+  elseif data.msg == "map" then
+    map = data
+  elseif data.msg == "tile" then
+    map[data.y][data.x] = data.tile
   end
 end

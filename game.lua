@@ -3,8 +3,14 @@ function game_load()
   y = 0
   xV = 0
   yV = 0
-  map = {{1, 1, 1}, {1, 1, 2}, {2, 1, 1}}
+  if status == "server" then
+    map = {msg = "map", {1, 1, 1}, {1, 1, 2}, {2, 1, 1}}
+  else
+    map = {{1}}
+  end
   tType = {0, 1}
+  tStrength = {0, 1}
+  mouseDown = {time = 0}
 end
 
 function game_update(dt)
@@ -47,6 +53,25 @@ function game_update(dt)
   targetAngle = math.atan2(mY - offset.y, mX - offset.x)
   targetPos = {x = 32 * math.cos(targetAngle), y = 32 * math.sin(targetAngle)}
   targetTile = {x = round((targetPos.x + x) / 32) + 1, y = round((targetPos.y + y) / 32) + 1}
+
+  if love.mouse.isDown(1) and mouseDown.x == targetTile.x and mouseDown.y == targetTile.y then
+    mouseDown.time = mouseDown.time + dt
+  else
+    mouseDown.time = 0
+    mouseDown.x = targetTile.x
+    mouseDown.y = targetTile.y
+  end
+
+  if mouseDown.x > 0 and mouseDown.x <= #map[1] and mouseDown.y > 0 and mouseDown.y <= #map then
+    if map[mouseDown.y][mouseDown.x] ~= 1 and tStrength[map[mouseDown.y][mouseDown.x]] <= mouseDown.time then
+      map[mouseDown.y][mouseDown.x] = 1
+
+      tileChange = {msg = "tile", x = mouseDown.x, y = mouseDown.y, tile = 1}
+    elseif love.mouse.isDown(2) then
+      map[mouseDown.y][mouseDown.x] = 2
+      tileChange = {msg = "tile", x = mouseDown.x, y = mouseDown.y, tile = 2}
+    end
+  end
 end
 
 function game_draw()
@@ -66,7 +91,7 @@ function game_draw()
     end
   end
   love.graphics.setColor(255, 255, 255)
-  love.graphics.print(tostring(targetTile.x) ..", ".. tostring(targetTile.y), 200, 0)
+  love.graphics.print(tostring(mouseDown.time), 200, 0)
 
   love.graphics.circle("line", offset.x + targetPos.x, offset.y + targetPos.y, 8, 10)
 end
