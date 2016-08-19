@@ -63,6 +63,7 @@ function onReceive(data)
     table.sort(players, function(a, b) return math.sqrt((x - a.x) * (x - a.x) + (y - a.y) * (y - a.y))  < math.sqrt((x - b.x) * (x - b.x) + (y -b.y) * (y - b.y)) end)
   elseif data.msg == "map" then
     map = data
+    formatRoof()
   elseif data.msg == "tile" then
     map[data.y][data.x] = data.tile
   end
