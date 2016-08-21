@@ -14,8 +14,6 @@ function client_load()
 
   client = lube.udpClient()
 	success, err = client:connect(ip, port)
-
-  game_load()
 end
 
 function client_update(dt)
@@ -25,8 +23,6 @@ function client_update(dt)
     status = "menu"
     errorMsg = "Invalid IP or port"
   end
-
-  game_update(dt)
 
   if tileChange ~= nil then
     client:send(pickle(tileChange))
@@ -43,7 +39,6 @@ function client_draw()
     love.graphics.print(tostring(players[i].name), 0, 15 + i * 15)
   end
 
-  game_draw()
 end
 
 function client_quit()

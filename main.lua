@@ -27,8 +27,10 @@ function love.update(dt)
   mY = love.mouse.getY() / scale.y
 
   if status == "server" then
+    game_update(dt)
     server_update(dt)
   elseif status == "client" then
+    game_update(dt)
     client_update(dt)
   elseif status == "menu" then
     menu_update(dt)
@@ -40,8 +42,10 @@ function love.draw()
   love.graphics.scale(scale.x, scale.y)
 
   if status == "server" then
+    game_draw()
     server_draw()
   elseif status == "client" then
+    game_draw()
     client_draw()
   elseif status == "menu" then
     menu_draw()
@@ -55,6 +59,8 @@ end
 function love.keypressed(key)
   if status == "menu" then
     menu_keypressed(key)
+  elseif status == "client" or status == "server" then
+    game_keypressed(key)
   end
 end
 

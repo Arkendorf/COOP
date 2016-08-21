@@ -15,9 +15,6 @@ function server_load()
   else
     server:listen(25565)
   end
-
-  game_load()
-  coords = ""
 end
 
 function server_update(dt)
@@ -25,11 +22,6 @@ function server_update(dt)
     server:send(pickle({msg = "disconnect", err = "Maximum players reached"}), lastConnect)
   end
 
-
-
-
-
-  game_update(dt)
   players[1].x = x
   players[1].y = y
 
@@ -49,7 +41,6 @@ function server_draw()
     love.graphics.print(tostring(players[i].name), 0, 15 + i * 15)
   end
 
-  game_draw()
 end
 
 function onConnect(clientid)

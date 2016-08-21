@@ -70,8 +70,8 @@ end
 
 function game_keypressed(key)
   if key == "1" then
-    currentBlock == 2
+    currentBlock = 2
   elseif key == "2" then
-    currentBlock == 3
+    currentBlock = 3
   end
 end

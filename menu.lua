@@ -58,6 +58,7 @@ function menu_mousepressed(x, y, button)
       selectedField = "num"
     elseif x > 188 and x < 188 + 31 and y > 159 and y < 159 + 16 then
       status = "server"
+      game_load()
       server_load()
     else
       selectedField = nil
@@ -69,6 +70,7 @@ function menu_mousepressed(x, y, button)
       selectedField = "port"
     elseif x > 188 and x < 188 + 31 and y > 159 and y < 159 + 16 then
       status = "client"
+      game_load()
       client_load()
     else
       selectedField = nil
