@@ -8,6 +8,7 @@ require ("client")
 require ("menu")
 require ("graphics")
 require ("game")
+require ("gamefunction")
 
 function love.load()
   status = "menu"
