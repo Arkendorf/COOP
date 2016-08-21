@@ -90,17 +90,19 @@ end
 
 function breakRoof(x, y) -- check if broken block is a support, and affect roofs supported by it
   for i = 1, #roof.support do
-    if roof.support[i] ~= nil then
+    if roof.support[i] ~= nil then -- once fixed, get rid of this
       result, position = has_value(roof.support[i], {x, y})
       if result == true then
-        roof.support[i][position] = nil
+        table.remove(roof.support[i], position)
         if #roof.support[i] < 1 then
-          roof.support[i] = nil
+          table.remove(roof.support, i)
           for rowsDown = 1, #roof do
             for rowsAcross = 1, #roof[1] do
               if roof[rowsDown][rowsAcross][1] ~= 0 then
                 if roof[rowsDown][rowsAcross][2] == i then
                   roof[rowsDown][rowsAcross] = {0}
+                elseif roof[rowsDown][rowsAcross][2] > i then
+                  roof[rowsDown][rowsAcross][2] = roof[rowsDown][rowsAcross][2] - 1
                 end
               end
             end

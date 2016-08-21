@@ -64,6 +64,9 @@ function game_draw()
     love.graphics.rectangle("fill", players[i].x + offset.x - x  - 16, players[i].y + offset.y - y  - 16, 32, 32)
   end
   love.graphics.print(pickle(roof.support), 200, 0)
+  if roof.support[1] ~= nil then
+    love.graphics.print(pickle(roof.support[1]), 235, 0)
+  end
 
   love.graphics.circle("line", offset.x + targetPos.x, offset.y + targetPos.y, 8, 10) -- draws target
 end
