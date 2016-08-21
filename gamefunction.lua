@@ -4,9 +4,10 @@ function build()
       map[mouseDown.y][mouseDown.x] = 1
 
       tileChange = {msg = "tile", x = mouseDown.x, y = mouseDown.y, tile = 1} -- BLOCK REMOVED!
+      breakRoof(mouseDown.x, mouseDown.y)
     elseif love.mouse.isDown(2) then
-      if tType[currentBlock] == 3 then
-        -- roof stuff
+      if tType[currentBlock] == 3 and roof[mouseDown.y][mouseDown.x][1] == 0 then
+        addRoof(mouseDown.x, mouseDown.y, currentBlock)
 
 
       elseif tType[currentBlock] ~= 3 and map[mouseDown.y][mouseDown.x] == 1 then
@@ -41,79 +42,74 @@ end
 
 function addRoof(x, y, roofType) -- check if roof can be built at location (and adds supports)
   local support = {}
-
   if tType[map[y][x]] == 1 then
-    roof.support[#roof.support + 1] = {x, y}
+    roof.support[#roof.support + 1] = {{x, y}}
     support[#support + 1] = #roof.support
-  end
-  if x < #map[1] then
-    if roof[y][x + 1][1] ~= 0 then
-      for i = 1, #roof[y][x + 1][2] do
-        support[#support + 1] = roof[y][x + 1][2][i]
-      end
-    end
   end
   if x > 1 then
     if roof[y][x - 1][1] ~= 0 then
-      for i = 1, #roof[y][x - 1][2] do
-        support[#support + 1] = roof[y][x - 1][2][i]
-      end
+      support[#support + 1] = roof[y][x - 1][2]
     end
   end
-  if y < #map then
-    if roof[y + 1][x][1] ~= 0 then
-      for i = 1, #roof[y + 1][x][2] do
-        support[#support + 1] = roof[y + 1][x][2][i]
-      end
+  if x < #map[1] then
+    if roof[y][x + 1][1] ~= 0 and has_value(support, roof[y][x + 1][2]) == false then
+      support[#support + 1] = roof[y][x + 1][2]
     end
   end
   if y > 1 then
-    if roof[y - 1][x][1] ~= 0 then
-      for i = 1, #roof[y - 1][x][2] do
-        support[#support + 1] = roof[y - 1][x][2][i]
-      end
+    if roof[y - 1][x][1] ~= 0 and has_value(support, roof[y - 1][x][2]) == false then
+      support[#support + 1] = roof[y - 1][x][2]
     end
   end
-
-  simplify(support)
-
-  if #support > 0 then
-    for rowsDown = 1, #roof do
-      for rowsAcross = 1, #roof[1] do
-        if roof[rowsDown][rowsAcross][1] ~= 0 then
-          for i = 1, #support do
-            if has_value(roof[rowsDown][rowsAcross][2], support[i]) == true then
-              roof[rowsDown][rowsAcross][2] = support
-              break
+  if y < #map then
+    if roof[y + 1][x][1] ~= 0 and has_value(support, roof[y + 1][x][2]) == false then
+      support[#support + 1] = roof[y + 1][x][2]
+    end
+  end
+  if #support > 1 then
+    for i = 2, #support do
+      roof.support[support[1]] = merge(roof.support[support[1]], roof.support[support[i]])
+      roof.support[support[i]] = nil
+      for rowsDown = 1, #roof do
+        for rowsAcross = 1, #roof[1] do
+          if roof[rowsDown][rowsAcross][1] ~= 0 then
+            if roof[rowsDown][rowsAcross][2] == support[i] then
+              roof[rowsDown][rowsAcross][2] = support[1]
+            elseif roof[rowsDown][rowsAcross][2] > support[i] then
+              roof[rowsDown][rowsAcross][2] = roof[rowsDown][rowsAcross][2] - 1
             end
           end
         end
       end
     end
-    roof[y][x] = {roofType, support}
+  end
+  if #support > 0 then
+    roof[y][x] = {roofType, support[1]}
   end
 end
 
 function breakRoof(x, y) -- check if broken block is a support, and affect roofs supported by it
-  local result, position = has_value(roof.support, {x, y})
-  if result == true then
-    roof.support[position] = nil
-
-    for rowsDown = 1, #roof do
-      for rowsAcross = 1, #roof[1] do
-        if roof[rowsDown][rowsAcross][1] ~= 0 then
-          local result2, position2 = has_value(roof[rowsDown][rowsAcross][2], position)
-          if result2 == true then
-            roof[rowsDown][rowsAcross][2][position2] = nil
-            if #roof[rowsDown][rowsAcross][2] < 1 then
-              roof[rowsDown][rowsAcross] = {0, {}}  -- ROOF REMOVED!
+  for i = 1, #roof.support do
+    if roof.support[i] ~= nil then
+      result, position = has_value(roof.support[i], {x, y})
+      if result == true then
+        roof.support[i][position] = nil
+        if #roof.support[i] < 1 then
+          roof.support[i] = nil
+          for rowsDown = 1, #roof do
+            for rowsAcross = 1, #roof[1] do
+              if roof[rowsDown][rowsAcross][1] ~= 0 then
+                if roof[rowsDown][rowsAcross][2] == i then
+                  roof[rowsDown][rowsAcross] = {0}
+                end
+              end
             end
           end
         end
+        break
       end
     end
   end
-
 end
 
 function formatRoof() -- creates the roof table
@@ -121,7 +117,7 @@ function formatRoof() -- creates the roof table
   for rowsDown = 1, #map do
     roof[rowsDown] = {}
     for rowsAcross = 1, #map[1] do
-      roof[rowsDown][rowsAcross] = {0, {}}
+      roof[rowsDown][rowsAcross] = {0}
     end
   end
 end
@@ -137,7 +133,7 @@ function has_value(table, val) -- check if table contains value
   else
     for index, value in ipairs (table) do
       if value == val then
-        return true, index
+        return true
       end
     end
   end
@@ -154,4 +150,9 @@ function simplify(table) -- removes duplicate table elements
      end
      return newTable
   end
+end
+
+function merge(table1, table2)
+  for k,v in pairs(table2) do table1[k] = v end
+  return table1
 end

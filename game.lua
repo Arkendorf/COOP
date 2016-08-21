@@ -5,13 +5,14 @@ function game_load()
   yV = 0
   if status == "server" then
     map = {msg = "map", {1, 1, 1}, {1, 1, 2}, {2, 1, 1}} -- sets up map
+    formatRoof()
   else
     map = {{1}} -- placeholder until servers sends real map
   end
   tType = {0, 1, 3} -- the tile type: 0 is no collision, 1 is collision, and 3 is roof
   tStrength = {0, 1, 1} -- time (in seconds) it takes to break each tile
   mouseDown = {time = 0} -- how long the mouse has been held for
-  currentBlock = 2 -- the tile the player will place
+  currentBlock = 3 -- the tile the player will place
 end
 
 function game_update(dt)
@@ -52,9 +53,9 @@ function game_draw()
   for rowsDown = 1, #map do -- renders tiles
     for rowsAcross = 1, #map[1] do
         love.graphics.draw(tilesheet, tiles[map[rowsDown][rowsAcross]], (rowsAcross - 1) * 32 + offset.x - x, (rowsDown - 1) * 32 + offset.y - y, 0, 1, 1, 16, 32)
-      -- if roof[rowsDown][rowsAcross][1] ~= 0 then
-      --   love.graphics.draw(tilesheet, tiles[roof[rowsDown][rowsAcross][1]], (rowsAcross - 1) * 32 + offset.x - x, (rowsDown - 1) * 32 + offset.y - y, 0, 1, 1, 16, 32)
-      -- end
+      if roof[rowsDown][rowsAcross][1] ~= 0 then
+        love.graphics.draw(tilesheet, tiles[roof[rowsDown][rowsAcross][1]], (rowsAcross - 1) * 32 + offset.x - x, (rowsDown - 1) * 32 + offset.y - y, 0, 1, 1, 16, 32)
+      end
     end
   end
 
@@ -62,6 +63,15 @@ function game_draw()
   for i = 2, #players do -- draws all other players
     love.graphics.rectangle("fill", players[i].x + offset.x - x  - 16, players[i].y + offset.y - y  - 16, 32, 32)
   end
+  love.graphics.print(pickle(roof.support), 200, 0)
 
   love.graphics.circle("line", offset.x + targetPos.x, offset.y + targetPos.y, 8, 10) -- draws target
+end
+
+function game_keypressed(key)
+  if key == "1" then
+    currentBlock == 2
+  elseif key == "2" then
+    currentBlock == 3
+  end
 end
